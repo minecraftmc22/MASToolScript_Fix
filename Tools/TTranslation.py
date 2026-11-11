@@ -3,19 +3,33 @@
 
 import TUtilLog
 
-def get_tl(str):
+# 已经提示过的缺失词条，避免同一个词条刷满整个log
+_warned = set()
+
+def get_tl(s):
+    lang = TARGET_LANG or zhCN
     try:
-        return TARGET_LANG[str]
+        return lang[s]
     except KeyError:
-        TUtilLog.warning("缺失翻译：{}".format(str))
-        return str
+        if s not in _warned:
+            _warned.add(s)
+            TUtilLog.warning("缺失翻译：{}".format(s))
+        return s
 en = {
-    "选择语言/Select Language": "",
-    "1 - 简体中文 (Default)": "",
-    "MAS 已经安装": "",
-    "未安装 MAS": ""
+    "选择语言/Select Language": "Select Language",
+    "1 - 简体中文 (Default)": "1 - Simplified Chinese (Default)",
+    "MAS 已经安装": "MAS is already installed",
+    "未安装 MAS": "MAS is not installed",
+    "准备安装MAS...": "Preparing to install MAS..."
 }
 
-zhCN = {}
+# 中文词条就是原文，缺了会刷一堆"缺失翻译"警告，所以在这里显式列出来
+zhCN = {
+    "选择语言/Select Language": "选择语言/Select Language",
+    "1 - 简体中文 (Default)": "1 - 简体中文 (Default)",
+    "MAS 已经安装": "MAS 已经安装",
+    "未安装 MAS": "未安装 MAS",
+    "准备安装MAS...": "准备安装MAS..."
+}
 
 TARGET_LANG = None

@@ -25,8 +25,10 @@ def main(silent=False):
         if not silent:
             print("--按下回车后退出--")
             input()
-
-        TUtil.tool_clear(True)
+            # 只有手动运行时才询问要不要删缓存，静默模式直接保留，方便复用已下载的文件
+            TUtil.tool_clear(True)
+        else:
+            TUtil.print_info("保留缓存目录，可再次运行以复用已下载的文件")
 
 if __name__ == '__main__':
     # 添加命令行参数解析

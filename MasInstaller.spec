@@ -8,7 +8,8 @@ a = Analysis(
     ['Tools\\MasInstaller.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    # 把本地清单一起打进去，网络不通时 find_local_manifest() 能直接从 _MEIPASS 读到
+    datas=[('extra_file.json', '.')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
