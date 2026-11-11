@@ -35,10 +35,28 @@ jobs:
         run: pyinstaller MasInstaller.spec --noconfirm --clean
 
       - name: Verify executable
+        shell: pwsh
         run: |
-          if (!(Test-Path dist/MasInstaller.exe)) { throw "dist/MasInstaller.exe 未生成" }
-          Get-Item dist/MasInstaller.exe | Select-Object Name, Length
-          .\dist\MasInstaller.exe --help
+          $ErrorActionPreference = 'Continue'
+          $exe = 'dist/MasInstaller.exe'
+          if (-not (Test-Path $exe)) {
+            Write-Host '::error::打包没有产出 dist/MasInstaller.exe'
+            exit 1
+          }
+          Write-Host ("size = {0:N0} bytes" -f (Get-Item $exe).Length)
+          # runner 是英文系统，强制 UTF-8，避免中文提示在管道里编码失败
+          $env:PYTHONUTF8 = '1'
+          $env:PYTHONIOENCODING = 'utf-8'
+          $output = & $exe --help 2>&1 | Out-String
+          $code = $LASTEXITCODE
+          Write-Host "exit code = $code"
+          Write-Host '---------- output ----------'
+          Write-Host $output
+          if ($code -ne 0) {
+            $brief = (($output -split "`n" | Where-Object { $_.Trim() }) | Select-Object -First 12) -join ' | '
+            Write-Host "::error::MasInstaller.exe --help 退出码 $code，输出：$brief"
+            exit 1
+          }
 
       - name: Check tag matches VER
         if: startsWith(github.ref, 'refs/tags/v')

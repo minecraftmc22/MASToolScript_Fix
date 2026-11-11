@@ -10,4 +10,5 @@ MASToolKit常见问题QA.txt
 .build-venv
 .build-venv/*
 .smoke*
-.workbuddy
+.workbuddy/
+.ci-venv/

@@ -1,6 +1,16 @@
-import TUtilLog, TUtil, time
 import argparse
 import sys
+
+# 输出被重定向到管道/文件时（CI、日志重定向），Windows 默认用本地代码页（英文系统是 cp1252），
+# 打印中文提示会抛 UnicodeEncodeError 直接把进程打成退出码 1。统一按 UTF-8 输出。
+if not sys.stdout.isatty():
+    for _stream in (sys.stdout, sys.stderr):
+        try:
+            _stream.reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+import TUtilLog, TUtil, time
 
 def main(silent=False):
     try:
